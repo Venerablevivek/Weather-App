@@ -11,13 +11,11 @@ const apiErrorImg = document.querySelector("[data-notFoundImg]");
 const apiErrorMessage = document.querySelector("[data-apiErrorText]");
 const apiErrorBtn = document.querySelector("[data-apiErrorBtn]");
 const apiErrorContainer = document.querySelector(".api-error-container");
-
+const msgText = document.querySelector("[data-msgText]");
 //initial Variables
 let currentTab = userTab;
 const API_Key = "63544dc8592c70dc5f25af7d3fc0389f";
 currentTab.classList.add("current-tab");
-
-getfromSessionStorage();
 
 //switching tabs
 
@@ -114,11 +112,29 @@ function renderWeatherInfo(weatherInfo){
 
 function getLocation(){
     if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(showPosition);
+        navigator.geolocation.getCurrentPosition(showPosition,showError);
     }else{
-        alert("No geoLocation Support Available");
+        grantAccessButton.style.display = "none";
+        msgText.innerText = "No geoLocation Support Available";
     }
 };
+
+function showError(error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        msgText.innerText = "You denied the request for Geolocation.";
+        break;
+      case error.POSITION_UNAVAILABLE:
+        msgText.innerText = "Location information is unavailable.";
+        break;
+      case error.TIMEOUT:
+        msgText.innerText = "The request to get user location timed out.";
+        break;
+      case error.UNKNOWN_ERROR:
+        msgText.innerText = "An unknown error occurred.";
+        break;
+    }
+  }
 
 function showPosition(position){
     const userCoordinates = {
@@ -131,6 +147,7 @@ function showPosition(position){
 };
 
 const grantAccessButton = document.querySelector("[data-grantAccess]");
+getfromSessionStorage();
 grantAccessButton.addEventListener("click",getLocation);
 
 
